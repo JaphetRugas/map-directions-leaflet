@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation with Leaflet</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+
+<div id="map" style="width: 600px; height: 400px;"></div>
+<p id="distance"></p>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    const map = L.map('map').setView([51.505, -0.09], 13);  // Initial view, can be any coords
+
+// Load tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+const fixedAddressCoords = [51.5074, -0.1278];  // Example: London's coordinates
+const fixedAddressMarker = L.marker(fixedAddressCoords).addTo(map);
+fixedAddressMarker.bindPopup('Fixed Address').openPopup();
+
+// Get user's current location
+navigator.geolocation.getCurrentPosition((position) => {
+    const userLat = position.coords.latitude;
+    const userLon = position.coords.longitude;
+    
+    const userMarker = L.marker([userLat, userLon]).addTo(map);
+    userMarker.bindPopup('Your Location').openPopup();
+    
+    const distance = map.distance([userLat, userLon], fixedAddressCoords) / 1000;  // Convert meters to km
+    document.getElementById('distance').innerText = `Distance to fixed address: ${distance.toFixed(2)} km`;
+});
+
+
+
+</script>
+</body>
+</html>
